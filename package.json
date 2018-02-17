@@ -21,7 +21,7 @@
     "babel-plugin",
     "babel-plugin-macros"
   ],
-  "files": ["dist"],
+  "files": ["dist", "macro.js"],
   "author": "Brad Cornes <bradlc41@gmail.com>",
   "license": "MIT",
   "bugs": {
