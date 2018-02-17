@@ -12,7 +12,12 @@ export default createMacro(
     )
 
     references.default.forEach(path => {
-      visit({ path: path.parentPath, t, configPath })
+      visit({
+        path: path.parentPath,
+        t,
+        configPath,
+        outputFormat: config && config.format
+      })
     })
   },
   { configName: 'tailwind' }
