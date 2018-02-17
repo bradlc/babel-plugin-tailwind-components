@@ -13,8 +13,9 @@ export default function visit({ path, t, configPath }) {
   let config
   let configIdentifier
 
-  if (process.env.NODE_ENV !== 'production') {
+  if (process.env.NODE_ENV === 'production') {
     config = require(configPath)
+  } else {
     const program = path.find(p => p.isProgram())
     configIdentifier = program.scope.generateUidIdentifier('tailwind')
     program.unshiftContainer(
