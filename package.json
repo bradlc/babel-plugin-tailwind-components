@@ -7,7 +7,7 @@
     "babel":
       "babel --plugins=transform-object-rest-spread --no-babelrc -d build src",
     "build":
-      "npm run -s babel && microbundle --i build/index.js --i build/macro.js -f cjs",
+      "npm run -s babel && microbundle -i build/index.js -f cjs && microbundle -i build/macro.js -f cjs -o ./macro.js",
     "prepublish": "npm run build"
   },
   "repository": {
