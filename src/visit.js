@@ -1,5 +1,6 @@
 const babylon = require('babylon')
 const nodePath = require('path')
+import deepmerge from 'deepmerge'
 import staticStyles from './static-styles'
 import dynamicStyles from './dynamic-styles'
 
@@ -30,21 +31,38 @@ export default function visit({ path, t, configPath, outputFormat }) {
     )
   }
 
+  let containerStyles
+
   const styles = classNames.reduce((acc, className, index) => {
-    // the 'works' but overwrites already used media query styles
-    // if (className === 'container') {
-    //   return merge(acc, {
-    //     width: '100%',
-    //     ['__spread__' + index]:
-    //       'Object.keys(' +
-    //       configIdentifier.name +
-    //       '.screens).reduce(function(acc, curr){return Object.assign({}, acc, {["@media (min-width: "+' +
-    //       configIdentifier.name +
-    //       '.screens[curr]+")"]:{maxWidth:' +
-    //       configIdentifier.name +
-    //       '.screens[curr]}})}, {})'
-    //   })
-    // }
+    if (className === 'container') {
+      if (outFormat === 'object' && isDev) {
+        containerStyles = {
+          ['__spread__' + index]: `Object.keys(${
+            configIdentifier.name
+          }.screens).reduce(function(acc, curr){return Object.assign({}, acc, {["@media (min-width: "+${
+            configIdentifier.name
+          }.screens[curr]+")"]:{maxWidth:${
+            configIdentifier.name
+          }.screens[curr]}})}, {})`
+        }
+
+        return merge(acc, { width: '100%' })
+      } else if (outFormat === 'object' && isProd) {
+        return deepmerge(acc, {
+          width: '100%',
+          ...Object.keys(config.screens).reduce((a, c) => {
+            return {
+              ...a,
+              ...{
+                [`@media (min-width: ${config.screens[c]})`]: {
+                  maxWidth: config.screens[c]
+                }
+              }
+            }
+          }, {})
+        })
+      }
+    }
 
     let modifier = className.match(/^([a-z-_]+):/i)
     if (modifier) {
@@ -166,7 +184,24 @@ export default function visit({ path, t, configPath, outputFormat }) {
     const tte = '`' + objToString(styles) + '`'
     path.replaceWith(babylon.parseExpression(tte))
   } else {
-    path.replaceWith(styleObj)
+    if (containerStyles) {
+      const program = path.find(p => p.isProgram())
+      const mergeIdentifier = program.scope.generateUidIdentifier('merge')
+      program.unshiftContainer(
+        'body',
+        t.importDeclaration(
+          [t.importDefaultSpecifier(mergeIdentifier)],
+          t.stringLiteral('babel-plugin-tailwind-components/merge')
+        )
+      )
+      const mergeCall = t.callExpression(mergeIdentifier, [
+        styleObj,
+        astify(containerStyles, t)
+      ])
+      path.replaceWith(mergeCall)
+    } else {
+      path.replaceWith(styleObj)
+    }
   }
 }
 
