@@ -74,13 +74,14 @@ export default function visit({ path, t, configPath, outputFormat }) {
 
     let key
     Object.keys(dynamicStyles).some(k => {
-      if (className.startsWith(k + '-')) {
+      if (className.startsWith(k + '-') || className === k) {
         key = k
         return true
       }
     })
     if (key) {
-      const value = className.substr(key.length + 1)
+      let value = className.substr(key.length + 1)
+      if (value === '') value = 'default'
       let props
 
       if (Array.isArray(dynamicStyles[key])) {
