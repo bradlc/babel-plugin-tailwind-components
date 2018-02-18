@@ -159,5 +159,5 @@ const App = () => <div {...style}>hello, world</div>
 ## Todo
 
 * support for the [container class](https://tailwindcss.com/docs/container); [in progress](https://github.com/bradlc/babel-plugin-tailwind-components/pull/2)
-* support for defaults; for example `rounded` should be an alias for `rounded-default`
+* ~~support for defaults; for example `rounded` should be an alias for `rounded-default`~~
 * add [CodeSandbox](https://codesandbox.io/) demos
