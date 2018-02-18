@@ -12,7 +12,9 @@ Place the config file in your project root as `tailwind.js`. Alternatively you c
 
 There are two ways to use babel-plugin-tailwind-components. The recommended way is via [babel-plugin-macros](https://github.com/kentcdodds/babel-plugin-macros):
 
-`npm install --save-dev babel-plugin-macros tailwind.macro`
+```
+npm install --save-dev babel-plugin-macros tailwind.macro
+```
 
 _Note: [tailwind.macro](https://github.com/bradlc/tailwind.macro) is merely an alias for [babel-plugin-tailwind-components/macro](https://github.com/bradlc/babel-plugin-tailwind-components/blob/master/src/macro.js)_
 
@@ -37,7 +39,9 @@ const Button = styled('button')`
 
 Alternatively, you can use the plugin without babel-plugin-macros:
 
-`npm install --save-dev babel-plugin-tailwind-components`
+```
+npm install --save-dev babel-plugin-tailwind-components
+```
 
 ```js
 // .babelrc
