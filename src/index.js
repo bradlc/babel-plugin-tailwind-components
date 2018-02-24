@@ -14,7 +14,7 @@ export default function({ types: t }) {
           state.opts.config || './tailwind.js'
         )
 
-        visit({ path, configPath, t, outputFormat: state.opts.format })
+        visit({ path, configPath, t })
       }
     }
   }
