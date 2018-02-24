@@ -3,10 +3,13 @@ const nodePath = require('path')
 import staticStyles from './static-styles'
 import dynamicStyles from './dynamic-styles'
 
-export default function visit({ path, t, configPath }) {
+export default function visit({ path, t, configPath, outputFormat }) {
   const isProd = process.env.NODE_ENV === 'production'
   const isDev = !isProd
 
+  const outFormat = outputFormat
+    ? outputFormat
+    : path.findParent(p => p.isTaggedTemplateExpression()) ? 'string' : 'object'
   const str = path.node.quasi.quasis[0].value.cooked
   const classNames = str.match(/[a-z0-9-_:]+/gi) || []
 
@@ -96,28 +99,29 @@ export default function visit({ path, t, configPath }) {
                     ? pre + format(config[x.config][value]) + post
                     : format(config[x.config][value])
               }
-            : '{' +
-                x.prop +
-                ':' +
-                pre +
-                configIdentifier.name +
-                '.' +
-                x.config +
-                '["' +
-                value +
-                '"]' +
-                post +
-                '}'
+            : outFormat === 'string'
+              ? `['${camelToKebab(x.prop)}', ${pre}${configIdentifier.name}.${
+                  x.config
+                }["${value}"]${post}]`
+              : `{${x.prop}:${pre}${configIdentifier.name}.${
+                  x.config
+                }["${value}"]${post}}`
         })
         if (isProd) {
           props = propVal.filter(x => typeof x !== 'undefined')[0]
-          console.log(props)
         } else {
-          propVal =
-            '[' +
-            propVal.join(',') +
-            '].filter(x => typeof x[Object.keys(x)[0]] !== "undefined" && x[Object.keys(x)[0]] !== "")[0]'
-          props = { ['__spread__' + index]: propVal }
+          if (outFormat === 'string') {
+            propVal = `[${propVal.join(
+              ','
+            )}].filter(x => typeof x[1] !== 'undefined' && x[1] !== '')[0].join(':')`
+            props = { ['__spread__' + index]: propVal }
+          } else {
+            propVal =
+              '[' +
+              propVal.join(',') +
+              '].filter(x => typeof x[Object.keys(x)[0]] !== "undefined" && x[Object.keys(x)[0]] !== "")[0]'
+            props = { ['__spread__' + index]: propVal }
+          }
         }
       } else {
         props = Array.isArray(dynamicStyles[key].prop)
@@ -158,9 +162,42 @@ export default function visit({ path, t, configPath }) {
   }, {})
 
   const styleObj = astify(styles, t)
-  const args = [styleObj]
 
-  path.replaceWith(styleObj)
+  if (outFormat === 'string') {
+    const tte = '`' + objToString(styles) + '`'
+    path.replaceWith(babylon.parseExpression(tte))
+  } else {
+    path.replaceWith(styleObj)
+  }
+}
+
+function objToString(obj) {
+  return Object.keys(obj).reduce((acc, k) => {
+    let value = obj[k]
+
+    if (k.startsWith('__spread__')) {
+      return acc + '${' + value + '};'
+    }
+
+    if (typeof value === 'string') {
+      if (value[0] === '$') {
+        value = '${' + value.substr(1) + '}'
+      }
+      return acc + camelToKebab(k) + ':' + value + ';'
+    } else {
+      value = objToString(value)
+      let key = k[0] === ':' ? '&' + k : k
+      key = key[0] === '`' ? key.substr(1, key.length - 2) : key
+      return acc + camelToKebab(key) + '{' + value + '};'
+    }
+  }, '')
+}
+
+function camelToKebab(val) {
+  return val
+    .replace(/[A-Z]/g, '-$&')
+    .toLowerCase()
+    .replace(/^(ms|o|moz|webkit)-/, '-$1-')
 }
 
 function getEnds(x, isDev) {
