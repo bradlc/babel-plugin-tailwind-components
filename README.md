@@ -62,38 +62,37 @@ const Button = styled('button')`
 
 ## How it works
 
-The babel plugin transforms the tagged template literal into either a style object or template literal, depending on context. If you use the tag inside a template literal, the output will be a template literal, like in the styled-components example above.
+The babel plugin transforms the tagged template literal into a style object:
 
 **In**
 
 ```js
-const foo = tw`bg-cover`
-const bar = `${tw`bg-cover`}`
+const foo = tw`text-red hover:text-green sm:text-blue`
 ```
 
 **Out**
 
 ```js
 const foo = {
-  backgroundSize: 'cover'
+  color: '#e3342f',
+  ':hover': {
+    color: '#38c172'
+  },
+  '@media (min-width: 576px)': {
+    color: '#3490dc'
+  }
 }
-const bar = ${`background-size:cover;`}
 ```
-
-You can enforce a particular format globally by setting the `format` option...
 
 ## Options
 
 `config`: path to your Tailwind config file. Defaults to _./tailwind.js_
 
-`format`: the format of the resulting styles (`object` or `string`). By default it will be an object except when inside a template literal.
-
 ```js
 // babel-plugin-macros.config.js
 module.exports = {
   tailwind: {
-    config: './tailwind.config.js',
-    format: 'object'
+    config: './tailwind.js'
   }
 }
 
@@ -102,8 +101,7 @@ module.exports = {
   "plugins": [
     [
       "tailwind-components", {
-        "config": "./tailwind.config.js",
-        "format": "object"
+        "config": "./tailwind.js"
       }
     ]
   ]
