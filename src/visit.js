@@ -10,7 +10,7 @@ export default function visit({ path, t, configPath, outputFormat }) {
 
   let outFormat = outputFormat
 
-  if (!outFormat) {
+  if (!outFormat || outFormat === 'auto') {
     // if we’re inside a <style> tag we output in string format
     // e.g. styled-jsx
     const parentTag = path.findParent(p => p.isJSXElement())
