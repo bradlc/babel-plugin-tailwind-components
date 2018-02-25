@@ -30,6 +30,7 @@
   "homepage":
     "https://github.com/bradlc/babel-plugin-tailwind-components#readme",
   "dependencies": {
+    "babel-generator": "^6.26.1",
     "babel-plugin-macros": "^2.1.0",
     "babylon": "^6.18.0"
   },

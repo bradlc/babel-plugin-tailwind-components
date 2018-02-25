@@ -1,4 +1,5 @@
 const babylon = require('babylon')
+const generate = require('babel-generator').default
 const nodePath = require('path')
 import staticStyles from './static-styles'
 import dynamicStyles from './dynamic-styles'
@@ -7,9 +8,19 @@ export default function visit({ path, t, configPath, outputFormat }) {
   const isProd = process.env.NODE_ENV === 'production'
   const isDev = !isProd
 
-  const outFormat = outputFormat
-    ? outputFormat
-    : path.findParent(p => p.isTaggedTemplateExpression()) ? 'string' : 'object'
+  let outFormat = outputFormat
+
+  if (!outFormat) {
+    // if we’re inside a <style> tag we output in string format
+    // e.g. styled-jsx
+    const parentTag = path.findParent(p => p.isJSXElement())
+    if (parentTag && parentTag.node.openingElement.name.name === 'style') {
+      outFormat = 'string'
+    } else {
+      outFormat = 'object'
+    }
+  }
+
   const str = path.node.quasi.quasis[0].value.cooked
   const classNames = str.match(/[a-z0-9-_:]+/gi) || []
 
@@ -164,31 +175,65 @@ export default function visit({ path, t, configPath, outputFormat }) {
   const styleObj = astify(styles, t)
 
   if (outFormat === 'string') {
-    const tte = '`' + objToString(styles) + '`'
-    path.replaceWith(babylon.parseExpression(tte))
+    const css = objToString(styles, isDev)
+    const parent = path.parentPath
+
+    if (parent.isTemplateLiteral()) {
+      const exprIndex = parent.get('expressions').indexOf(path)
+      const before = parent.get('quasis')[exprIndex]
+      const after = parent.get('quasis')[exprIndex + 1]
+
+      after.node.value.raw = before.node.value.raw + css + after.node.value.raw
+      after.node.value.cooked =
+        before.node.value.cooked + css + after.node.value.cooked
+
+      before.remove()
+      path.remove()
+
+      const ast = babylon.parseExpression(generate(parent.node).code)
+      parent.replaceWith(ast)
+    } else {
+      const tte = '`' + css + '`'
+      path.replaceWith(babylon.parseExpression(tte))
+    }
   } else {
     path.replaceWith(styleObj)
   }
 }
 
-function objToString(obj) {
+/**
+ * the empty comment is to
+ * work around a bug somewhere along this chain:
+ * styled-jsx -> styled-jsx-plugin-postcss -> postcss-nested
+ *
+ * code similar to this doesn’t work as expected:
+ * .foo {
+ *   ${'color: red'};
+ *   &:hover {
+ *     ${'color: blue'};
+ *   }
+ * }
+ */
+function objToString(obj, commentFix = false) {
+  const comment = commentFix ? '/**/' : ''
+
   return Object.keys(obj).reduce((acc, k) => {
     let value = obj[k]
 
     if (k.startsWith('__spread__')) {
-      return acc + '${' + value + '};'
+      return acc + '${' + value + '};' + comment
     }
 
     if (typeof value === 'string') {
       if (value[0] === '$') {
         value = '${' + value.substr(1) + '}'
       }
-      return acc + camelToKebab(k) + ':' + value + ';'
+      return acc + camelToKebab(k) + ':' + value + ';' + comment
     } else {
       value = objToString(value)
       let key = k[0] === ':' ? '&' + k : k
       key = key[0] === '`' ? key.substr(1, key.length - 2) : key
-      return acc + camelToKebab(key) + '{' + value + '};'
+      return acc + camelToKebab(key) + '{' + value + '};' + comment
     }
   }, '')
 }
