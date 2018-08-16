@@ -14,6 +14,18 @@ export default function({ types: t }) {
         )
 
         visit({ path, configPath, t, outputFormat: state.opts.format })
+      },
+      JSXAttribute(path, state) {
+        console.log(path.node.name.name)
+        if (path.node.name.name !== 'tw') return
+
+        const sourceRoot = state.file.opts.sourceRoot || '.'
+        const configPath = nodePath.resolve(
+          sourceRoot,
+          state.opts.config || './tailwind.js'
+        )
+
+        visit({ path, configPath, t, outputFormat: state.opts.format })
       }
     }
   }

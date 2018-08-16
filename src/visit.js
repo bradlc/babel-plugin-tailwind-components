@@ -20,22 +20,37 @@ export default function visit({ path, t, configPath, outputFormat }) {
     }
   }
 
-  const str = path.node.quasi.quasis[0].value.cooked
+  const str =
+    path.node.type === 'JSXAttribute'
+      ? path.node.value.value
+      : path.node.quasi.quasis[0].value.cooked
   const classNames = str.match(/[a-z0-9-_:]+/gi) || []
 
   let config
   let configIdentifier
+  const program = path.find(p => p.isProgram())
 
   if (process.env.NODE_ENV === 'production') {
     config = require(configPath)
   } else {
-    const program = path.find(p => p.isProgram())
     configIdentifier = program.scope.generateUidIdentifier('tailwind')
     program.unshiftContainer(
       'body',
       t.importDeclaration(
         [t.importDefaultSpecifier(configIdentifier)],
         t.stringLiteral(configPath)
+      )
+    )
+  }
+
+  let cssIdentifier
+  if (path.node.type === 'JSXAttribute') {
+    cssIdentifier = program.scope.generateUidIdentifier('css')
+    program.unshiftContainer(
+      'body',
+      t.importDeclaration(
+        [t.importSpecifier(cssIdentifier, cssIdentifier)],
+        t.stringLiteral('emotion')
       )
     )
   }
@@ -187,8 +202,70 @@ export default function visit({ path, t, configPath, outputFormat }) {
       path.replaceWith(babylon.parseExpression(tte))
     }
   } else {
-    path.replaceWith(styleObj)
+    if (path.node.type === 'JSXAttribute') {
+      let el = path.findParent(p => t.isJSXOpeningElement(p))
+      let classNamePath = el
+        .get('attributes')
+        .filter(
+          attr =>
+            !t.isJSXSpreadAttribute(attr.node) &&
+            attr.get('name').node.name === 'className'
+        )[0]
+
+      let classNameValue =
+        classNamePath && classNamePath.node && classNamePath.node.value
+      let cssCall = t.callExpression(cssIdentifier, [styleObj])
+
+      if (
+        !classNameValue ||
+        (t.isStringLiteral(classNameValue) && !classNameValue.value)
+      ) {
+        if (classNamePath) classNamePath.remove()
+        path.replaceWith(createClassNameAttr(cssCall, t))
+        return
+      }
+      path.remove()
+
+      if (classNamePath && classNamePath.parentPath) {
+        if (t.isJSXExpressionContainer(classNameValue)) {
+          classNamePath.replaceWith(
+            createClassNameAttr(
+              add(
+                cssCall,
+                add(t.stringLiteral(' '), classNameValue.expression, t),
+                t
+              ),
+              t
+            )
+          )
+        } else {
+          classNamePath.replaceWith(
+            createClassNameAttr(
+              add(
+                cssCall,
+                t.stringLiteral(` ${classNameValue.value || ''}`),
+                t
+              ),
+              t
+            )
+          )
+        }
+      }
+    } else {
+      path.replaceWith(styleObj)
+    }
   }
+}
+
+function add(a, b, t) {
+  return t.binaryExpression('+', a, b)
+}
+
+function createClassNameAttr(expression, t) {
+  return t.jSXAttribute(
+    t.jSXIdentifier('className'),
+    t.jSXExpressionContainer(expression)
+  )
 }
 
 /**
