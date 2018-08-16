@@ -41,42 +41,34 @@ export default function visit({ path, t, configPath, outputFormat }) {
   }
 
   const styles = classNames.reduce((acc, className, index) => {
-    // the 'works' but overwrites already used media query styles
-    // if (className === 'container') {
-    //   return merge(acc, {
-    //     width: '100%',
-    //     ['__spread__' + index]:
-    //       'Object.keys(' +
-    //       configIdentifier.name +
-    //       '.screens).reduce(function(acc, curr){return Object.assign({}, acc, {["@media (min-width: "+' +
-    //       configIdentifier.name +
-    //       '.screens[curr]+")"]:{maxWidth:' +
-    //       configIdentifier.name +
-    //       '.screens[curr]}})}, {})'
-    //   })
-    // }
+    let mods = []
+    let modifier
 
-    let modifier = className.match(/^([a-z-_]+):/i)
-    if (modifier) {
-      className = className.substr(modifier[0].length)
-      if (modifier[1] === 'hover' || modifier[1] === 'focus') {
-        modifier = ':' + modifier[1]
-      } else {
-        modifier = isProd
-          ? '@media (min-width: ' + config.screens[modifier[1]] + ')'
-          : '`@media (min-width: ${' +
-            configIdentifier.name +
-            '.screens["' +
-            modifier[1] +
-            '"]})`'
+    while (modifier !== null) {
+      modifier = className.match(/^([a-z-_]+):/i)
+      if (modifier) {
+        className = className.substr(modifier[0].length)
+        mods.push(modifier[1])
       }
     }
 
+    mods = mods.map(mod => {
+      if (mod === 'hover' || mod === 'focus') {
+        return ':' + mod
+      }
+      return isProd
+        ? '@media (min-width: ' + config.screens[mod] + ')'
+        : '`@media (min-width: ${' +
+            configIdentifier.name +
+            '.screens["' +
+            mod +
+            '"]})`'
+    })
+
     if (staticStyles[className]) {
-      if (modifier) {
-        return merge(acc, {
-          [modifier]: merge(acc[modifier] || {}, staticStyles[className])
-        })
+      if (mods.length) {
+        dset(acc, mods, merge(dlv(acc, mods, {}), staticStyles[className]))
+        return acc
       } else {
         return merge(acc, staticStyles[className])
       }
@@ -159,10 +151,9 @@ export default function visit({ path, t, configPath, outputFormat }) {
         }, {})
       }
 
-      if (modifier) {
-        return merge(acc, {
-          [modifier]: merge(acc[modifier] || {}, props)
-        })
+      if (mods.length) {
+        dset(acc, mods, merge(dlv(acc, mods, {}), props))
+        return acc
       } else {
         return merge(acc, props)
       }
@@ -317,4 +308,23 @@ function objectExpressionElements(literal, t, spreadType) {
         return t.objectProperty(key, astify(literal[k], t), computed)
       }
     })
+}
+
+function dset(obj, keys, val) {
+  keys.split && (keys = keys.split('.'))
+  var i = 0,
+    l = keys.length,
+    t = obj,
+    x
+  for (; i < l; ++i) {
+    x = t[keys[i]]
+    t = t[keys[i]] = i === l - 1 ? val : x == null ? {} : x
+  }
+}
+
+function dlv(obj, key, def, p) {
+  p = 0
+  key = key.split ? key.split('.') : key
+  while (obj && p < key.length) obj = obj[key[p++]]
+  return obj === undefined || p < key.length ? def : obj
 }
