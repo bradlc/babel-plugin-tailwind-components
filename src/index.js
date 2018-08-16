@@ -1,4 +1,3 @@
-const babylon = require('babylon')
 const nodePath = require('path')
 import visit from './visit'
 

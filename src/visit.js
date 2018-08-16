@@ -1,6 +1,5 @@
-const babylon = require('babylon')
-const generate = require('babel-generator').default
-const nodePath = require('path')
+const babylon = require('@babel/parser')
+const generate = require('@babel/generator').default
 import staticStyles from './static-styles'
 import dynamicStyles from './dynamic-styles'
 
@@ -292,22 +291,30 @@ function astify(literal, t) {
       if (Array.isArray(literal)) {
         return t.arrayExpression(literal.map(x => astify(x, t)))
       }
-      return t.objectExpression(
-        Object.keys(literal)
-          .filter(k => {
-            return typeof literal[k] !== 'undefined'
-          })
-          .map(k => {
-            if (k.startsWith('__spread__')) {
-              return t.spreadProperty(babylon.parseExpression(literal[k]))
-            } else {
-              const computed = k.startsWith('`')
-              const key = computed
-                ? babylon.parseExpression(k)
-                : t.stringLiteral(k)
-              return t.objectProperty(key, astify(literal[k], t), computed)
-            }
-          })
-      )
+      try {
+        return t.objectExpression(
+          objectExpressionElements(literal, t, 'spreadElement')
+        )
+      } catch (err) {
+        return t.objectExpression(
+          objectExpressionElements(literal, t, 'spreadProperty')
+        )
+      }
   }
+}
+
+function objectExpressionElements(literal, t, spreadType) {
+  return Object.keys(literal)
+    .filter(k => {
+      return typeof literal[k] !== 'undefined'
+    })
+    .map(k => {
+      if (k.startsWith('__spread__')) {
+        return t[spreadType](babylon.parseExpression(literal[k]))
+      } else {
+        const computed = k.startsWith('`')
+        const key = computed ? babylon.parseExpression(k) : t.stringLiteral(k)
+        return t.objectProperty(key, astify(literal[k], t), computed)
+      }
+    })
 }
