@@ -53,7 +53,7 @@ export default function visit({ path, t, configPath, outputFormat }) {
     }
 
     mods = mods.map(mod => {
-      if (mod === 'hover' || mod === 'focus') {
+      if (mod === 'hover' || mod === 'focus' || mod === 'active') {
         return ':' + mod
       }
       return isProd

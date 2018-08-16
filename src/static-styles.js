@@ -16,10 +16,6 @@ export default {
   'bg-repeat-x': { backgroundRepeat: 'repeat-x' },
   'bg-repeat-y': { backgroundRepeat: 'repeat-y' },
 
-  // https://tailwindcss.com/docs/background-size
-  'bg-cover': { backgroundSize: 'cover' },
-  'bg-contain': { backgroundSize: 'contain' },
-
   // https://tailwindcss.com/docs/background-attachment
   'bg-fixed': { backgroundAttachment: 'fixed' },
   'bg-local': { backgroundAttachment: 'local' },
@@ -102,7 +98,10 @@ export default {
 
   // https://tailwindcss.com/docs/cursor
   'cursor-auto': { cursor: 'auto' },
+  'cursor-default': { cursor: 'default' },
   'cursor-pointer': { cursor: 'pointer' },
+  'cursor-wait': { cursor: 'wait' },
+  'cursor-move': { cursor: 'move' },
   'cursor-not-allowed': { cursor: 'not-allowed' },
 
   // https://tailwindcss.com/docs/resize
@@ -123,12 +122,18 @@ export default {
   'list-reset': { listStyle: 'none', padding: 0 },
 
   // https://tailwindcss.com/docs/overflow
-  'overflow-visible': { overflow: 'visible' },
   'overflow-auto': { overflow: 'auto' },
   'overflow-hidden': { overflow: 'hidden' },
-  'overflow-x-scroll': { overflowX: 'auto' },
-  'overflow-y-scroll': { overflowY: 'auto' },
+  'overflow-visible': { overflow: 'visible' },
   'overflow-scroll': { overflow: 'scroll' },
+  'overflow-x-auto': { overflowX: 'auto' },
+  'overflow-y-auto': { overflowY: 'auto' },
+  'overflow-x-hidden': { overflowX: 'hidden' },
+  'overflow-y-hidden': { overflowY: 'hidden' },
+  'overflow-x-visible': { overflowX: 'visible' },
+  'overflow-y-visible': { overflowY: 'visible' },
+  'overflow-x-scroll': { overflowX: 'scroll' },
+  'overflow-y-scroll': { overflowY: 'scroll' },
   'scrolling-touch': { webkitOverflowScrolling: 'touch' },
   'scrolling-auto': { webkitOverflowScrolling: 'auto' },
 
@@ -137,6 +142,7 @@ export default {
   fixed: { position: 'fixed' },
   absolute: { position: 'absolute' },
   relative: { position: 'relative' },
+  sticky: { position: 'sticky' },
   'pin-t': { top: 0 },
   'pin-r': { right: 0 },
   'pin-b': { bottom: 0 },
@@ -195,5 +201,16 @@ export default {
 
   // https://tailwindcss.com/docs/visibility
   visible: { visibility: 'visible' },
-  invisible: { visibility: 'hidden' }
+  invisible: { visibility: 'hidden' },
+
+  // https://tailwindcss.com/docs/border-collapse
+  'border-collapse': { borderCollapse: 'collapse' },
+  'border-separate': { borderCollapse: 'separate' },
+
+  // https://tailwindcss.com/docs/table-layout
+  'table-auto': { tableLayout: 'auto' },
+  'table-fixed': { tableLayout: 'fixed' },
+
+  // https://tailwindcss.com/docs/outline
+  'outline-none': { outline: 0 }
 }

@@ -1,6 +1,10 @@
 export default {
   // https://tailwindcss.com/docs/background-color
-  bg: { prop: 'backgroundColor', config: 'backgroundColors' },
+  // https://tailwindcss.com/docs/background-size
+  bg: [
+    { prop: 'backgroundColor', config: 'backgroundColors' },
+    { prop: 'backgroundSize', config: 'backgroundSize' }
+  ],
 
   // https://tailwindcss.com/docs/border-width
   'border-t': { prop: 'borderTopWidth', config: 'borderWidths' },
@@ -24,9 +28,6 @@ export default {
   'rounded-br': { prop: 'borderBottomRightRadius', config: 'borderRadius' },
   'rounded-bl': { prop: 'borderBottomLeftRadius', config: 'borderRadius' },
   rounded: { prop: 'borderRadius', config: 'borderRadius' },
-
-  // TODO: .container?
-  // https://tailwindcss.com/docs/container
 
   // https://tailwindcss.com/docs/opacity
   opacity: { prop: 'opacity', config: 'opacity' },
