@@ -7,7 +7,7 @@ export default function visit({ path, t, configPath, outputFormat }) {
   const isProd = process.env.NODE_ENV === 'production'
   const isDev = !isProd
 
-  let outFormat = outputFormat
+  let outFormat = path.node.type === 'JSXAttribute' ? 'object' : outputFormat
 
   if (!outFormat || outFormat === 'auto') {
     // if we’re inside a <style> tag we output in string format
