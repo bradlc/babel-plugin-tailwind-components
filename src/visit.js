@@ -49,7 +49,7 @@ export default function visit({ path, t, configPath, outputFormat }) {
     program.unshiftContainer(
       'body',
       t.importDeclaration(
-        [t.importSpecifier(cssIdentifier, cssIdentifier)],
+        [t.importSpecifier(cssIdentifier, t.identifier('css'))],
         t.stringLiteral('emotion')
       )
     )
