@@ -19,6 +19,5 @@ export default createMacro(
         outputFormat: config && config.format
       })
     })
-  },
-  { configName: 'tailwind' }
+  }
 )
