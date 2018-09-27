@@ -33,28 +33,6 @@ export default function({ types: t }) {
         }
 
         path.traverse({
-          ArrayExpression(path) {
-            let program = path.findParent(p => p.isProgram())
-            let id = program.scope.generateUidIdentifier('cx')
-            program.unshiftContainer(
-              'body',
-              t.importDeclaration(
-                [t.importSpecifier(id, t.identifier('cx'))],
-                t.stringLiteral('emotion')
-              )
-            )
-
-            path.replaceWith(
-              t.callExpression(
-                cloneNode(id),
-                path.get('elements').map(e => cloneNode(e.node))
-              )
-            )
-            path.skip()
-          }
-        })
-
-        path.traverse({
           StringLiteral(path) {
             visit({ path, configPath, t, outputFormat: state.opts.format })
             path.skip()

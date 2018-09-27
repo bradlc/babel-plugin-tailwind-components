@@ -43,18 +43,6 @@ export default function visit({ path, t, configPath, outputFormat }) {
     )
   }
 
-  let cssIdentifier
-  if (path.node.type === 'StringLiteral') {
-    cssIdentifier = program.scope.generateUidIdentifier('css')
-    program.unshiftContainer(
-      'body',
-      t.importDeclaration(
-        [t.importSpecifier(cssIdentifier, t.identifier('css'))],
-        t.stringLiteral('emotion')
-      )
-    )
-  }
-
   const styles = classNames.reduce((acc, className, index) => {
     let mods = []
     let modifier
@@ -202,11 +190,7 @@ export default function visit({ path, t, configPath, outputFormat }) {
       path.replaceWith(babylon.parseExpression(tte))
     }
   } else {
-    if (path.node.type === 'StringLiteral') {
-      path.replaceWith(t.callExpression(cssIdentifier, [styleObj]))
-    } else {
-      path.replaceWith(styleObj)
-    }
+    path.replaceWith(styleObj)
   }
 }
 
