@@ -39,7 +39,7 @@ export default function({ types: t }) {
             program.unshiftContainer(
               'body',
               t.importDeclaration(
-                [t.importSpecifier(id, id)],
+                [t.importSpecifier(id, t.identifier('cx'))],
                 t.stringLiteral('emotion')
               )
             )
