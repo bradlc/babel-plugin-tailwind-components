@@ -1,6 +1,6 @@
 {
   "name": "babel-plugin-tailwind-components",
-  "version": "0.5.4",
+  "version": "0.5.5",
   "description": "Use Tailwind with any CSS-in-JS library",
   "main": "dist/index.js",
   "scripts": {

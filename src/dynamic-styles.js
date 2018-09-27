@@ -70,21 +70,21 @@ export default {
   my: { prop: ['marginTop', 'marginBottom'], config: 'margin' },
   m: { prop: 'margin', config: 'margin' },
 
-  '-mt': { prop: 'marginTop', config: 'negativeMargin', pre: '-' },
-  '-mr': { prop: 'marginRight', config: 'negativeMargin', pre: '-' },
-  '-mb': { prop: 'marginBottom', config: 'negativeMargin', pre: '-' },
-  '-ml': { prop: 'marginLeft', config: 'negativeMargin', pre: '-' },
+  '-mt': { prop: 'marginTop', config: 'negativeMargin', pre: '"-"+' },
+  '-mr': { prop: 'marginRight', config: 'negativeMargin', pre: '"-"+' },
+  '-mb': { prop: 'marginBottom', config: 'negativeMargin', pre: '"-"+' },
+  '-ml': { prop: 'marginLeft', config: 'negativeMargin', pre: '"-"+' },
   '-mx': {
     prop: ['marginLeft', 'marginRight'],
     config: 'negativeMargin',
-    pre: '-'
+    pre: '"-"+'
   },
   '-my': {
     prop: ['marginTop', 'marginBottom'],
     config: 'negativeMargin',
-    pre: '-'
+    pre: '"-"+'
   },
-  '-m': { prop: 'margin', config: 'negativeMargin', pre: '-' },
+  '-m': { prop: 'margin', config: 'negativeMargin', pre: '"-"+' },
 
   // https://tailwindcss.com/docs/svg
   fill: { prop: 'fill', config: 'svgFill' },

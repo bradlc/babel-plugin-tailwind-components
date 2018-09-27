@@ -24,7 +24,7 @@ export default function visit({ path, t, configPath, outputFormat }) {
     path.node.type === 'StringLiteral'
       ? path.node.value
       : path.node.quasi.quasis[0].value.cooked
-  const classNames = str.match(/[a-z0-9-_:]+/gi) || []
+  const classNames = str.match(/\S+/g) || []
 
   let config
   let configIdentifier
