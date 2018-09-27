@@ -7,7 +7,7 @@ export default function visit({ path, t, configPath, outputFormat }) {
   const isProd = process.env.NODE_ENV === 'production'
   const isDev = !isProd
 
-  let outFormat = path.node.type === 'JSXAttribute' ? 'object' : outputFormat
+  let outFormat = path.node.type === 'StringLiteral' ? 'object' : outputFormat
 
   if (!outFormat || outFormat === 'auto') {
     // if we’re inside a <style> tag we output in string format
@@ -21,8 +21,8 @@ export default function visit({ path, t, configPath, outputFormat }) {
   }
 
   const str =
-    path.node.type === 'JSXAttribute'
-      ? path.node.value.value
+    path.node.type === 'StringLiteral'
+      ? path.node.value
       : path.node.quasi.quasis[0].value.cooked
   const classNames = str.match(/[a-z0-9-_:]+/gi) || []
 
@@ -44,7 +44,7 @@ export default function visit({ path, t, configPath, outputFormat }) {
   }
 
   let cssIdentifier
-  if (path.node.type === 'JSXAttribute') {
+  if (path.node.type === 'StringLiteral') {
     cssIdentifier = program.scope.generateUidIdentifier('css')
     program.unshiftContainer(
       'body',
@@ -202,55 +202,8 @@ export default function visit({ path, t, configPath, outputFormat }) {
       path.replaceWith(babylon.parseExpression(tte))
     }
   } else {
-    if (path.node.type === 'JSXAttribute') {
-      let el = path.findParent(p => t.isJSXOpeningElement(p))
-      let classNamePath = el
-        .get('attributes')
-        .filter(
-          attr =>
-            !t.isJSXSpreadAttribute(attr.node) &&
-            attr.get('name').node.name === 'className'
-        )[0]
-
-      let classNameValue =
-        classNamePath && classNamePath.node && classNamePath.node.value
-      let cssCall = t.callExpression(cssIdentifier, [styleObj])
-
-      if (
-        !classNameValue ||
-        (t.isStringLiteral(classNameValue) && !classNameValue.value)
-      ) {
-        if (classNamePath) classNamePath.remove()
-        path.replaceWith(createClassNameAttr(cssCall, t))
-        return
-      }
-      path.remove()
-
-      if (classNamePath && classNamePath.parentPath) {
-        if (t.isJSXExpressionContainer(classNameValue)) {
-          classNamePath.replaceWith(
-            createClassNameAttr(
-              add(
-                cssCall,
-                add(t.stringLiteral(' '), classNameValue.expression, t),
-                t
-              ),
-              t
-            )
-          )
-        } else {
-          classNamePath.replaceWith(
-            createClassNameAttr(
-              add(
-                cssCall,
-                t.stringLiteral(` ${classNameValue.value || ''}`),
-                t
-              ),
-              t
-            )
-          )
-        }
-      }
+    if (path.node.type === 'StringLiteral') {
+      path.replaceWith(t.callExpression(cssIdentifier, [styleObj]))
     } else {
       path.replaceWith(styleObj)
     }
