@@ -14,8 +14,8 @@ export default {
 
   // https://tailwindcss.com/docs/border-color
   border: [
-    { prop: 'borderColor', config: 'borderColors' },
-    { prop: 'borderWidth', config: 'borderWidths' }
+    { prop: 'borderWidth', config: 'borderWidths' },
+    { prop: 'borderColor', config: 'borderColors' }
   ],
 
   // https://tailwindcss.com/docs/border-radius
