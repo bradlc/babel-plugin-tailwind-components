@@ -1,10 +1,12 @@
 const nodePath = require('path')
 import visit from './visit'
+import parseTte from './parse-tte.js'
+import findOrCreateImport from './find-or-create-import.js'
 
 export default function({
   types: t,
   transformTaggedTemplateExpression = true,
-  transformJSXAttribute = false
+  transformJSXAttribute = true
 }) {
   let cloneNode = t.cloneNode || t.cloneDeep
 
@@ -14,33 +16,14 @@ export default function({
         let cssIdentifier
 
         if (transformJSXAttribute) {
-          path.traverse({
-            ImportDeclaration(path) {
-              if (path.node.source.value !== 'emotion') return
-              path.node.specifiers.some(specifier => {
-                if (specifier.imported.name === 'css') {
-                  cssIdentifier = specifier.local
-                  return true
-                }
-                return false
-              })
-            }
-          })
-
-          if (!cssIdentifier) {
-            cssIdentifier = path.scope.generateUidIdentifier('css')
-            path.unshiftContainer(
-              'body',
-              t.importDeclaration(
-                [t.importSpecifier(cssIdentifier, t.identifier('css'))],
-                t.stringLiteral('emotion')
-              )
-            )
-          }
+          cssIdentifier = findOrCreateImport(t, path, 'emotion', 'css')
         }
 
+        let styledIdentifier = findOrCreateImport(t, path, 'emotion', 'styled')
+
         function TaggedTemplateExpression(path) {
-          if (path.node.tag.name !== 'tw') return
+          let parsed = parseTte(path, t, styledIdentifier)
+          if (!parsed) return
 
           let sourceRoot = state.file.opts.sourceRoot || '.'
           let configPath = nodePath.resolve(
@@ -48,7 +31,13 @@ export default function({
             state.opts.config || './tailwind.js'
           )
 
-          visit({ path, configPath, t, outputFormat: state.opts.format })
+          visit({
+            path: parsed.path,
+            str: parsed.str,
+            configPath,
+            t,
+            outputFormat: state.opts.format
+          })
         }
 
         function JSXAttribute(path) {
@@ -70,6 +59,7 @@ export default function({
             StringLiteral(path) {
               visit({
                 path,
+                str: path.node.value,
                 configPath,
                 t,
                 outputFormat: state.opts.format,

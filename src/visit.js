@@ -5,6 +5,7 @@ import dynamicStyles from './dynamic-styles'
 
 export default function visit({
   path,
+  str,
   t,
   configPath,
   outputFormat,
@@ -27,10 +28,6 @@ export default function visit({
     }
   }
 
-  const str =
-    path.node.type === 'StringLiteral'
-      ? path.node.value
-      : path.node.quasi.quasis[0].value.cooked
   const classNames = str.match(/\S+/g) || []
 
   let config
