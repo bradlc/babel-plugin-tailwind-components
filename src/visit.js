@@ -3,7 +3,14 @@ const generate = require('@babel/generator').default
 import staticStyles from './static-styles'
 import dynamicStyles from './dynamic-styles'
 
-export default function visit({ path, t, configPath, outputFormat }) {
+export default function visit({
+  path,
+  t,
+  configPath,
+  outputFormat,
+  cssIdentifier
+}) {
+  let cloneNode = t.cloneNode || t.cloneDeep
   const isProd = process.env.NODE_ENV === 'production'
   const isDev = !isProd
 
@@ -39,18 +46,6 @@ export default function visit({ path, t, configPath, outputFormat }) {
       t.importDeclaration(
         [t.importDefaultSpecifier(configIdentifier)],
         t.stringLiteral(configPath)
-      )
-    )
-  }
-
-  let cssIdentifier
-  if (path.node.type === 'StringLiteral') {
-    cssIdentifier = program.scope.generateUidIdentifier('css')
-    program.unshiftContainer(
-      'body',
-      t.importDeclaration(
-        [t.importSpecifier(cssIdentifier, t.identifier('css'))],
-        t.stringLiteral('emotion')
       )
     )
   }
@@ -203,22 +198,11 @@ export default function visit({ path, t, configPath, outputFormat }) {
     }
   } else {
     if (path.node.type === 'StringLiteral') {
-      path.replaceWith(t.callExpression(cssIdentifier, [styleObj]))
+      path.replaceWith(t.callExpression(cloneNode(cssIdentifier), [styleObj]))
     } else {
       path.replaceWith(styleObj)
     }
   }
-}
-
-function add(a, b, t) {
-  return t.binaryExpression('+', a, b)
-}
-
-function createClassNameAttr(expression, t) {
-  return t.jSXAttribute(
-    t.jSXIdentifier('className'),
-    t.jSXExpressionContainer(expression)
-  )
 }
 
 /**

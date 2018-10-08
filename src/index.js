@@ -8,50 +8,90 @@ export default function({
 }) {
   let cloneNode = t.cloneNode || t.cloneDeep
 
-  function TaggedTemplateExpression(path, state) {
-    if (path.node.tag.name !== 'tw') return
+  return {
+    visitor: {
+      Program(path, state) {
+        let cssIdentifier
 
-    let sourceRoot = state.file.opts.sourceRoot || '.'
-    let configPath = nodePath.resolve(
-      sourceRoot,
-      state.opts.config || './tailwind.js'
-    )
+        if (transformJSXAttribute) {
+          path.traverse({
+            ImportDeclaration(path) {
+              if (path.node.source.value !== 'emotion') return
+              path.node.specifiers.some(specifier => {
+                if (specifier.imported.name === 'css') {
+                  cssIdentifier = specifier.local
+                  return true
+                }
+                return false
+              })
+            }
+          })
 
-    visit({ path, configPath, t, outputFormat: state.opts.format })
-  }
+          if (!cssIdentifier) {
+            cssIdentifier = path.scope.generateUidIdentifier('css')
+            path.unshiftContainer(
+              'body',
+              t.importDeclaration(
+                [t.importSpecifier(cssIdentifier, t.identifier('css'))],
+                t.stringLiteral('emotion')
+              )
+            )
+          }
+        }
 
-  function JSXAttribute(path, state) {
-    if (path.node.name.name !== 'tw') return
+        function TaggedTemplateExpression(path) {
+          if (path.node.tag.name !== 'tw') return
 
-    let sourceRoot = state.file.opts.sourceRoot || '.'
-    let configPath = nodePath.resolve(
-      sourceRoot,
-      state.opts.config || './tailwind.js'
-    )
+          let sourceRoot = state.file.opts.sourceRoot || '.'
+          let configPath = nodePath.resolve(
+            sourceRoot,
+            state.opts.config || './tailwind.js'
+          )
 
-    if (path.node.value.type === 'StringLiteral') {
-      path
-        .get('value')
-        .replaceWith(t.jSXExpressionContainer(cloneNode(path.node.value)))
-    }
+          visit({ path, configPath, t, outputFormat: state.opts.format })
+        }
 
-    path.traverse({
-      StringLiteral(path) {
-        visit({ path, configPath, t, outputFormat: state.opts.format })
-        path.skip()
+        function JSXAttribute(path) {
+          if (path.node.name.name !== 'tw') return
+
+          let sourceRoot = state.file.opts.sourceRoot || '.'
+          let configPath = nodePath.resolve(
+            sourceRoot,
+            state.opts.config || './tailwind.js'
+          )
+
+          if (path.node.value.type === 'StringLiteral') {
+            path
+              .get('value')
+              .replaceWith(t.jSXExpressionContainer(cloneNode(path.node.value)))
+          }
+
+          path.traverse({
+            StringLiteral(path) {
+              visit({
+                path,
+                configPath,
+                t,
+                outputFormat: state.opts.format,
+                cssIdentifier
+              })
+              path.skip()
+            }
+          })
+        }
+
+        let visitor = {}
+
+        if (transformTaggedTemplateExpression) {
+          visitor.TaggedTemplateExpression = TaggedTemplateExpression
+        }
+
+        if (transformJSXAttribute) {
+          visitor.JSXAttribute = JSXAttribute
+        }
+
+        path.traverse(visitor)
       }
-    })
+    }
   }
-
-  let visitor = {}
-
-  if (transformTaggedTemplateExpression) {
-    visitor.TaggedTemplateExpression = TaggedTemplateExpression
-  }
-
-  if (transformJSXAttribute) {
-    visitor.JSXAttribute = JSXAttribute
-  }
-
-  return { visitor }
 }
