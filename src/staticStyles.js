@@ -1,4 +1,4 @@
-export default {
+let staticStyles = {
   // https://tailwindcss.com/docs/background-position
   'bg-bottom': { backgroundPosition: 'bottom' },
   'bg-center': { backgroundPosition: 'center' },
@@ -212,5 +212,14 @@ export default {
   'table-fixed': { tableLayout: 'fixed' },
 
   // https://tailwindcss.com/docs/outline
-  'outline-none': { outline: 0 }
+  'outline-none': { outline: 0 },
+
+  // https://tailwindcss.com/docs/object-fit
+  'object-contain': { objectFit: 'contain' },
+  'object-cover': { objectFit: 'cover' },
+  'object-fill': { objectFit: 'fill' },
+  'object-none': { objectFit: 'none' },
+  'object-scale-down': { objectFit: 'scale-down' }
 }
+
+export default staticStyles

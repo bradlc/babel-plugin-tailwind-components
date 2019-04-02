@@ -1,4 +1,5 @@
 node_modules
-build
-dist
-/macro.*
+/macro.js
+/macro.js.map
+/utils.umd.js
+/utils.umd.js.map

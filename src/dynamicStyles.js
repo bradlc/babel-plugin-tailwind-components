@@ -1,39 +1,52 @@
-export default {
+let dynamicStyles = {
   // https://tailwindcss.com/docs/background-color
   // https://tailwindcss.com/docs/background-size
   bg: [
-    { prop: 'backgroundColor', config: 'backgroundColors' },
-    { prop: 'backgroundSize', config: 'backgroundSize' }
+    { prop: 'backgroundColor', config: 'backgroundColor' },
+    { prop: 'backgroundSize', config: 'backgroundSize' },
+    { prop: 'backgroundPosition', config: 'backgroundPosition' }
   ],
 
   // https://tailwindcss.com/docs/border-width
-  'border-t': { prop: 'borderTopWidth', config: 'borderWidths' },
-  'border-b': { prop: 'borderBottomWidth', config: 'borderWidths' },
-  'border-l': { prop: 'borderLeftWidth', config: 'borderWidths' },
-  'border-r': { prop: 'borderRightWidth', config: 'borderWidths' },
+  'border-t': { prop: 'borderTopWidth', config: 'borderWidth' },
+  'border-b': { prop: 'borderBottomWidth', config: 'borderWidth' },
+  'border-l': { prop: 'borderLeftWidth', config: 'borderWidth' },
+  'border-r': { prop: 'borderRightWidth', config: 'borderWidth' },
 
   // https://tailwindcss.com/docs/border-color
   border: [
-    { prop: 'borderWidth', config: 'borderWidths' },
-    { prop: 'borderColor', config: 'borderColors' }
+    { prop: 'borderWidth', config: 'borderWidth' },
+    { prop: 'borderColor', config: 'borderColor' }
   ],
 
   // https://tailwindcss.com/docs/border-radius
-  'rounded-t': { prop: 'borderTopRadius', config: 'borderRadius' },
-  'rounded-r': { prop: 'borderRightRadius', config: 'borderRadius' },
-  'rounded-b': { prop: 'borderBottomRadius', config: 'borderRadius' },
-  'rounded-l': { prop: 'borderLeftRadius', config: 'borderRadius' },
   'rounded-tl': { prop: 'borderTopLeftRadius', config: 'borderRadius' },
   'rounded-tr': { prop: 'borderTopRightRadius', config: 'borderRadius' },
   'rounded-br': { prop: 'borderBottomRightRadius', config: 'borderRadius' },
   'rounded-bl': { prop: 'borderBottomLeftRadius', config: 'borderRadius' },
+  'rounded-t': {
+    prop: ['borderTopLeftRadius', 'borderTopRightRadius'],
+    config: 'borderRadius'
+  },
+  'rounded-r': {
+    prop: ['borderTopRightRadius', 'borderBottomRightRadius'],
+    config: 'borderRadius'
+  },
+  'rounded-b': {
+    prop: ['borderBottomLeftRadius', 'borderBottomRightRadius'],
+    config: 'borderRadius'
+  },
+  'rounded-l': {
+    prop: ['borderTopLeftRadius', 'borderBottomLeftRadius'],
+    config: 'borderRadius'
+  },
   rounded: { prop: 'borderRadius', config: 'borderRadius' },
 
   // https://tailwindcss.com/docs/opacity
   opacity: { prop: 'opacity', config: 'opacity' },
 
   // https://tailwindcss.com/docs/shadows
-  shadow: { prop: 'boxShadow', config: 'shadows' },
+  shadow: { prop: 'boxShadow', config: 'boxShadow' },
 
   // https://tailwindcss.com/docs/width
   w: { prop: 'width', config: 'width' },
@@ -87,31 +100,48 @@ export default {
   '-m': { prop: 'margin', config: 'negativeMargin', pre: '"-"+' },
 
   // https://tailwindcss.com/docs/svg
-  fill: { prop: 'fill', config: 'svgFill' },
-  stroke: { prop: 'stroke', config: 'svgStroke' },
+  fill: { prop: 'fill', config: 'fill' },
+  stroke: { prop: 'stroke', config: 'stroke' },
 
   // https://tailwindcss.com/docs/fonts
   font: [
-    { prop: 'fontWeight', config: 'fontWeights' },
+    { prop: 'fontWeight', config: 'fontWeight' },
     {
       prop: 'fontFamily',
-      config: 'fonts',
-      preDev: '(',
-      postDev: ` || []).map(x => '"' + x + '"').join(', ')`,
-      format: val => val.map(x => '"' + x + '"').join(', ')
+      config: 'fontFamily'
     }
   ],
   text: [
-    { prop: 'color', config: 'textColors' },
-    { prop: 'fontSize', config: 'textSizes' }
+    { prop: 'color', config: 'textColor' },
+    { prop: 'fontSize', config: 'fontSize' }
   ],
 
   // https://tailwindcss.com/docs/line-height
-  leading: { prop: 'lineHeight', config: 'leading' },
+  leading: { prop: 'lineHeight', config: 'lineHeight' },
 
   // https://tailwindcss.com/docs/letter-spacing
-  tracking: { prop: 'letterSpacing', config: 'tracking' },
+  tracking: { prop: 'letterSpacing', config: 'letterSpacing' },
 
   // https://tailwindcss.com/docs/z-index
-  z: { prop: 'zIndex', config: 'zIndex' }
+  z: { prop: 'zIndex', config: 'zIndex' },
+
+  cursor: { prop: 'cursor', config: 'cursor' },
+
+  object: { prop: 'objectPosition', config: 'objectPosition' },
+
+  flex: { prop: 'flex', config: 'flex' },
+  'flex-grow': { prop: 'flexGrow', config: 'flexGrow' },
+  'flex-shrink': { prop: 'flexShrink', config: 'flexShrink' },
+
+  list: { prop: 'listStyleType', config: 'listStyleType' },
+
+  top: { prop: 'top', config: 'inset' },
+  right: { prop: 'right', config: 'inset' },
+  bottom: { prop: 'bottom', config: 'inset' },
+  left: { prop: 'left', config: 'inset' },
+  'inset-x': { prop: ['left', 'right'], config: 'inset' },
+  'inset-y': { prop: ['top', 'bottom'], config: 'inset' },
+  inset: { prop: ['top', 'right', 'bottom', 'left'], config: 'inset' }
 }
+
+export default dynamicStyles

@@ -1,0 +1,3 @@
+let styles = {
+  textTransform: 'uppercase'
+}

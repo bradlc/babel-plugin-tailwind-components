@@ -2,10 +2,10 @@
   "name": "babel-plugin-tailwind-components",
   "version": "0.5.10",
   "description": "Use Tailwind with any CSS-in-JS library",
-  "main": "dist/index.js",
+  "main": "macro.js",
   "scripts": {
-    "babel": "babel --plugins=@babel/plugin-proposal-object-rest-spread --no-babelrc -d build src",
-    "build": "npm run -s babel && microbundle -i build/index.js -f cjs && microbundle -i build/macro.js -f cjs -o ./macro.js",
+    "build": "microbundle -i src/macro.js -f cjs -o ./macro.js --target node && microbundle -i src/utils.js -f umd -o ./utils.js",
+    "test": "npm run build && jest",
     "prepublish": "npm run build"
   },
   "repository": {
@@ -20,8 +20,8 @@
     "babel-plugin-macros"
   ],
   "files": [
-    "dist",
-    "macro.js"
+    "macro.js",
+    "utils.umd.js"
   ],
   "author": "Brad Cornes <bradlc41@gmail.com>",
   "license": "MIT",
@@ -30,15 +30,17 @@
   },
   "homepage": "https://github.com/bradlc/babel-plugin-tailwind-components#readme",
   "dependencies": {
-    "@babel/generator": "^7.0.0",
-    "@babel/parser": "^7.0.0",
-    "babel-plugin-macros": "^2.1.0"
+    "@babel/parser": "^7.4.2",
+    "babel-plugin-macros": "^2.5.1",
+    "dlv": "^1.1.2",
+    "dset": "^2.0.1",
+    "tailwindcss": "^1.0.0-beta.4"
   },
   "devDependencies": {
-    "@babel/cli": "^7.0.0",
-    "@babel/core": "^7.0.0",
-    "@babel/plugin-proposal-object-rest-spread": "^7.0.0",
-    "@babel/preset-react": "^7.0.0",
-    "microbundle": "^0.4.3"
+    "babel-plugin-tester": "^6.0.1",
+    "glob-all": "^3.1.0",
+    "jest": "^24.5.0",
+    "microbundle": "^0.11.0",
+    "prettier": "^1.16.4"
   }
 }
