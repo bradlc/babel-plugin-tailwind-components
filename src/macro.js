@@ -1,5 +1,6 @@
 import { createMacro } from 'babel-plugin-macros'
 import { resolve, relative, dirname } from 'path'
+import { existsSync } from 'fs'
 import findIdentifier from './findIdentifier.js'
 import parseTte from './parseTte.js'
 import transformString from './transformString.js'
@@ -12,6 +13,11 @@ export default createMacro(
     let sourceRoot = state.file.opts.sourceRoot || '.'
     let configFile = config && config.config
     let configPath = resolve(sourceRoot, configFile || './tailwind.config.js')
+    let configExists = existsSync(configPath)
+
+    if (configFile && !configExists) {
+      throw new Error(`Couldn’t find Tailwind config ${configPath}`)
+    }
 
     state.tailwindConfigIdentifier = state.file.path.scope.generateUidIdentifier(
       'tailwindConfig'
@@ -106,18 +112,20 @@ export default createMacro(
                 state.tailwindUtilsIdentifier,
                 t.identifier('resolveConfig')
               ),
-              [originalConfigIdentifier]
+              [configExists ? originalConfigIdentifier : t.objectExpression([])]
             )
           )
         ])
       )
-      state.file.path.unshiftContainer(
-        'body',
-        t.importDeclaration(
-          [t.importDefaultSpecifier(originalConfigIdentifier)],
-          t.stringLiteral(configImportPath)
+      if (configExists) {
+        state.file.path.unshiftContainer(
+          'body',
+          t.importDeclaration(
+            [t.importDefaultSpecifier(originalConfigIdentifier)],
+            t.stringLiteral(configImportPath)
+          )
         )
-      )
+      }
       state.file.path.unshiftContainer(
         'body',
         t.importDeclaration(
