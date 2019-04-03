@@ -31,7 +31,15 @@ export function stringifyScreen(config, screen) {
 
 export function resolveStyle(config, opts, key) {
   for (let opt of opts) {
-    if (['backgroundColor', 'borderColor', 'textColor'].includes(opt.config)) {
+    if (
+      [
+        'backgroundColor',
+        'borderColor',
+        'textColor',
+        'fill',
+        'stroke'
+      ].includes(opt.config)
+    ) {
       let colors = flattenColors(dlv(config, ['theme', opt.config], {}))
       if (typeof colors[key] !== 'undefined') {
         return { [opt.prop]: colors[key] }
