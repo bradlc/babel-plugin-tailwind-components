@@ -34,7 +34,7 @@
     "babel-plugin-macros": "^2.5.1",
     "dlv": "^1.1.2",
     "dset": "^2.0.1",
-    "tailwindcss": "^1.0.0-beta.4"
+    "tailwindcss": "^1.0.0-beta.8"
   },
   "devDependencies": {
     "babel-plugin-tester": "^6.0.1",
