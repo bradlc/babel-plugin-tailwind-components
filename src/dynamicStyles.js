@@ -99,6 +99,9 @@ let dynamicStyles = {
   },
   '-m': { prop: 'margin', config: 'negativeMargin', pre: '"-"+' },
 
+  // https://tailwindcss.com/docs/order
+  order: { prop: 'order', config: 'order' },
+
   // https://tailwindcss.com/docs/svg
   fill: { prop: 'fill', config: 'fill' },
   stroke: { prop: 'stroke', config: 'stroke' },
