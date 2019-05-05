@@ -17,13 +17,7 @@ export default function parseTte({ path, types: t, styledIdentifier, state }) {
       .replaceWith(cloneNode(styledIdentifier))
     state.shouldImportStyled = true
   } else if (path.node.tag.type === 'MemberExpression') {
-    path
-      .get('tag')
-      .replaceWith(
-        t.callExpression(cloneNode(styledIdentifier), [
-          t.stringLiteral(path.node.tag.property.name)
-        ])
-      )
+    path.get('tag').get('object').replaceWith(cloneNode(styledIdentifier))
     state.shouldImportStyled = true
   }
 
