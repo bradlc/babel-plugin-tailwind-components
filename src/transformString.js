@@ -74,6 +74,7 @@ export default function transformString({ path, str, state, types: t }) {
       }
       let key = className.substr(prefix.length + 1)
       if (key === '') key = 'default'
+      if (prefix.startsWith('-')) key = '-' + key
 
       let obj
 

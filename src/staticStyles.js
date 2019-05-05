@@ -187,11 +187,6 @@ let staticStyles = {
   // https://tailwindcss.com/docs/user-select
   'select-none': { userSelect: 'none' },
   'select-text': { userSelect: 'text' }
-
-  // https://tailwindcss.com/docs/order
-  'order-first': { order: -1 },
-  'order-last': { order: 999 },
-  'order-none': { order: 0 }
 }
 
 export default staticStyles

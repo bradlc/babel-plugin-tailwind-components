@@ -83,21 +83,13 @@ let dynamicStyles = {
   my: { prop: ['marginTop', 'marginBottom'], config: 'margin' },
   m: { prop: 'margin', config: 'margin' },
 
-  '-mt': { prop: 'marginTop', config: 'negativeMargin', pre: '"-"+' },
-  '-mr': { prop: 'marginRight', config: 'negativeMargin', pre: '"-"+' },
-  '-mb': { prop: 'marginBottom', config: 'negativeMargin', pre: '"-"+' },
-  '-ml': { prop: 'marginLeft', config: 'negativeMargin', pre: '"-"+' },
-  '-mx': {
-    prop: ['marginLeft', 'marginRight'],
-    config: 'negativeMargin',
-    pre: '"-"+'
-  },
-  '-my': {
-    prop: ['marginTop', 'marginBottom'],
-    config: 'negativeMargin',
-    pre: '"-"+'
-  },
-  '-m': { prop: 'margin', config: 'negativeMargin', pre: '"-"+' },
+  '-mt': { prop: 'marginTop', config: 'margin'},
+  '-mr': { prop: 'marginRight', config: 'margin'},
+  '-mb': { prop: 'marginBottom', config: 'margin'},
+  '-ml': { prop: 'marginLeft', config: 'margin'},
+  '-mx': { prop: ['marginLeft', 'marginRight'], config: 'margin' },
+  '-my': { prop: ['marginTop', 'marginBottom'], config: 'margin' },
+  '-m': { prop: 'margin', config: 'margin'},
 
   // https://tailwindcss.com/docs/order
   order: { prop: 'order', config: 'order' },
@@ -127,6 +119,7 @@ let dynamicStyles = {
 
   // https://tailwindcss.com/docs/z-index
   z: { prop: 'zIndex', config: 'zIndex' },
+ '-z': { prop: 'zIndex', config: 'zIndex' },
 
   cursor: { prop: 'cursor', config: 'cursor' },
 
@@ -142,9 +135,17 @@ let dynamicStyles = {
   right: { prop: 'right', config: 'inset' },
   bottom: { prop: 'bottom', config: 'inset' },
   left: { prop: 'left', config: 'inset' },
+  '-top': { prop: 'top', config: 'inset' },
+  '-right': { prop: 'right', config: 'inset' },
+  '-bottom': { prop: 'bottom', config: 'inset' },
+  '-left': { prop: 'left', config: 'inset' },
+
   'inset-x': { prop: ['left', 'right'], config: 'inset' },
   'inset-y': { prop: ['top', 'bottom'], config: 'inset' },
-  inset: { prop: ['top', 'right', 'bottom', 'left'], config: 'inset' }
+  inset: { prop: ['top', 'right', 'bottom', 'left'], config: 'inset' },
+  '-inset-x': { prop: ['left', 'right'], config: 'inset' },
+  '-inset-y': { prop: ['top', 'bottom'], config: 'inset' },
+  '-inset': { prop: ['top', 'right', 'bottom', 'left'], config: 'inset' }
 }
 
 export default dynamicStyles
