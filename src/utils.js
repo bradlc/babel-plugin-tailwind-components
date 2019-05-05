@@ -11,7 +11,7 @@ export function resolveConfig(config) {
 }
 
 export function stringifyScreen(config, screenName) {
-  let screen = config.theme.screens[screenName]
+  let screen = dlv(config, ['theme', 'screens', screenName])
   if (typeof screen === 'undefined') {
     throw new Error(`Couldn’t find Tailwind screen: ${screenName}`)
   }
