@@ -127,6 +127,8 @@ export default function transformString({ path, str, state, types: t }) {
       } else {
         return { ...acc, ...obj }
       }
+    } else {
+      throw new Error(`Couldn’t resolve Tailwind class name: ${className}`)
     }
 
     return acc

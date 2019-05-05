@@ -10,8 +10,11 @@ export function resolveConfig(config) {
   return resolvedConfig
 }
 
-export function stringifyScreen(config, screen) {
-  screen = config.theme.screens[screen]
+export function stringifyScreen(config, screenName) {
+  let screen = config.theme.screens[screenName]
+  if (typeof screen === 'undefined') {
+    throw new Error(`Couldn’t find Tailwind screen: ${screenName}`)
+  }
   if (typeof screen === 'string') return `@media (min-width: ${screen})`
   if (typeof screen.raw === 'string') {
     return `@media ${screen.raw}`
