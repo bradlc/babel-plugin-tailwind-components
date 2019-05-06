@@ -11,6 +11,7 @@ import addImport from './addImport.js'
 export default createMacro(
   ({ babel: { types: t }, references, state, config }) => {
     let sourceRoot = state.file.opts.sourceRoot || '.'
+    let program = state.file.path
     let configFile = config && config.config
     let configPath = resolve(sourceRoot, configFile || './tailwind.config.js')
     let configExists = existsSync(configPath)
@@ -19,10 +20,10 @@ export default createMacro(
       throw new Error(`Couldn’t find Tailwind config ${configPath}`)
     }
 
-    state.tailwindConfigIdentifier = state.file.path.scope.generateUidIdentifier(
+    state.tailwindConfigIdentifier = program.scope.generateUidIdentifier(
       'tailwindConfig'
     )
-    state.tailwindUtilsIdentifier = state.file.path.scope.generateUidIdentifier(
+    state.tailwindUtilsIdentifier = program.scope.generateUidIdentifier(
       'tailwindUtils'
     )
     state.isProd = process.env.NODE_ENV === 'production'
@@ -42,14 +43,12 @@ export default createMacro(
 
     state.existingStyledIdentifier = false
     state.styledIdentifier = findIdentifier({
-      program: state.file.path,
+      program,
       mod: styledImport.from,
       name: styledImport.import
     })
     if (state.styledIdentifier === null) {
-      state.styledIdentifier = state.file.path.scope.generateUidIdentifier(
-        'styled'
-      )
+      state.styledIdentifier = program.scope.generateUidIdentifier('styled')
     } else {
       state.existingStyledIdentifier = true
     }
@@ -88,7 +87,7 @@ export default createMacro(
     if (state.shouldImportStyled && !state.existingStyledIdentifier) {
       addImport({
         types: t,
-        program: state.file.path,
+        program,
         mod: styledImport.from,
         name: styledImport.import,
         identifier: state.styledIdentifier
@@ -98,11 +97,11 @@ export default createMacro(
     if (state.shouldImportConfig) {
       let configImportPath =
         './' + relative(dirname(state.file.opts.filename), configPath)
-      let originalConfigIdentifier = state.file.path.scope.generateUidIdentifier(
+      let originalConfigIdentifier = program.scope.generateUidIdentifier(
         'tailwindConfig'
       )
 
-      state.file.path.unshiftContainer(
+      program.unshiftContainer(
         'body',
         t.variableDeclaration('const', [
           t.variableDeclarator(
@@ -118,7 +117,7 @@ export default createMacro(
         ])
       )
       if (configExists) {
-        state.file.path.unshiftContainer(
+        program.unshiftContainer(
           'body',
           t.importDeclaration(
             [t.importDefaultSpecifier(originalConfigIdentifier)],
@@ -126,7 +125,7 @@ export default createMacro(
           )
         )
       }
-      state.file.path.unshiftContainer(
+      program.unshiftContainer(
         'body',
         t.importDeclaration(
           [t.importDefaultSpecifier(state.tailwindUtilsIdentifier)],
@@ -134,6 +133,8 @@ export default createMacro(
         )
       )
     }
+
+    program.scope.crawl()
   },
   { configName: 'tailwind' }
 )
