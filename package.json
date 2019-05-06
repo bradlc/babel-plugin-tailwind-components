@@ -1,6 +1,6 @@
 {
   "name": "tailwind.macro",
-  "version": "1.0.0-alpha.3",
+  "version": "1.0.0-alpha.4",
   "description": "Use Tailwind with any CSS-in-JS library",
   "main": "macro.js",
   "scripts": {
