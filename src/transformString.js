@@ -130,8 +130,6 @@ export default function transformString({ path, str, state, types: t }) {
     } else {
       throw new Error(`Couldn’t resolve Tailwind class name: ${className}`)
     }
-
-    return acc
   }, {})
 
   let ast = astify(styles, t)

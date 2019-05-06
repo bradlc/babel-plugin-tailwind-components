@@ -71,17 +71,6 @@ export default createMacro(
         types: t,
         state
       })
-
-      return
-
-      visit({
-        path: parsed.path,
-        str: parsed.str,
-        t,
-        configPath,
-        outputFormat: config && config.format,
-        state
-      })
     })
 
     if (state.shouldImportStyled && !state.existingStyledIdentifier) {
