@@ -30,7 +30,9 @@ export default createMacro(
     state.isDev = !state.isProd
 
     if (state.isProd) {
-      state.config = resolveConfig([require(configPath), defaultTailwindConfig])
+      state.config = configFile
+        ? resolveConfig([require(configPath), defaultTailwindConfig])
+        : resolveConfig([defaultTailwindConfig])
     }
 
     let styledImport =
