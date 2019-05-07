@@ -30,7 +30,7 @@ export default createMacro(
     state.isDev = !state.isProd
 
     if (state.isProd) {
-      state.config = configFile
+      state.config = configExists
         ? resolveConfig([require(configPath), defaultTailwindConfig])
         : resolveConfig([defaultTailwindConfig])
     }
