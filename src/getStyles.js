@@ -73,6 +73,7 @@ export default function getStyles(str, t, isDev) {
       }
       let key = className.substr(prefix.length + 1)
       if (key === '') key = 'default'
+      if (prefix.startsWith('-')) key = '-' + key
 
       let obj
 
