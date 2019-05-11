@@ -83,13 +83,13 @@ let dynamicStyles = {
   my: { prop: ['marginTop', 'marginBottom'], config: 'margin' },
   m: { prop: 'margin', config: 'margin' },
 
-  '-mt': { prop: 'marginTop', config: 'margin'},
-  '-mr': { prop: 'marginRight', config: 'margin'},
-  '-mb': { prop: 'marginBottom', config: 'margin'},
-  '-ml': { prop: 'marginLeft', config: 'margin'},
+  '-mt': { prop: 'marginTop', config: 'margin' },
+  '-mr': { prop: 'marginRight', config: 'margin' },
+  '-mb': { prop: 'marginBottom', config: 'margin' },
+  '-ml': { prop: 'marginLeft', config: 'margin' },
   '-mx': { prop: ['marginLeft', 'marginRight'], config: 'margin' },
   '-my': { prop: ['marginTop', 'marginBottom'], config: 'margin' },
-  '-m': { prop: 'margin', config: 'margin'},
+  '-m': { prop: 'margin', config: 'margin' },
 
   // https://tailwindcss.com/docs/order
   order: { prop: 'order', config: 'order' },
@@ -119,7 +119,7 @@ let dynamicStyles = {
 
   // https://tailwindcss.com/docs/z-index
   z: { prop: 'zIndex', config: 'zIndex' },
- '-z': { prop: 'zIndex', config: 'zIndex' },
+  '-z': { prop: 'zIndex', config: 'zIndex' },
 
   cursor: { prop: 'cursor', config: 'cursor' },
 
