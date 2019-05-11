@@ -2,13 +2,12 @@ import dset from 'dset'
 import dlv from 'dlv'
 import staticStyles from './staticStyles.js'
 import dynamicStyles from './dynamicStyles.js'
-import astify from './astify.js'
 import { stringifyScreen, resolveStyle } from './utils.js'
+import astify from './astify.js'
+import assignify from './assignify.js'
 
-export default function transformString({ path, str, state, types: t }) {
-  let classNames = str.match(/\S+/g) || []
-
-  let styles = classNames.reduce((acc, className, index) => {
+export default function getStyles(str, t, isDev) {
+  let styles = (str.match(/\S+/g) || []).reduce((acc, className, index) => {
     let modifiers = []
     let modifier
 
@@ -134,41 +133,9 @@ export default function transformString({ path, str, state, types: t }) {
 
   let ast = astify(styles, t)
 
-  if (state.isDev) {
+  if (isDev) {
     ast = assignify(ast, t)
   }
 
-  path.replaceWith(ast)
-}
-
-function assignify(objAst, t) {
-  if (objAst.type !== 'ObjectExpression') return objAst
-
-  let cloneNode = t.cloneNode || t.cloneDeep
-  let currentChunk = []
-  let chunks = []
-
-  objAst.properties.forEach(property => {
-    if (property.type === 'SpreadElement') {
-      if (currentChunk.length) {
-        chunks.push(cloneNode(t.objectExpression(currentChunk)))
-        currentChunk.length = 0
-      }
-      chunks.push(cloneNode(property.argument))
-    } else {
-      property.value = assignify(property.value, t)
-      currentChunk.push(property)
-    }
-  })
-
-  if (chunks.length === 0) return objAst
-
-  if (currentChunk.length) {
-    chunks.push(cloneNode(t.objectExpression(currentChunk)))
-  }
-
-  return t.callExpression(
-    t.memberExpression(t.identifier('Object'), t.identifier('assign')),
-    chunks
-  )
+  return ast
 }
