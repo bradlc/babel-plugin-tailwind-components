@@ -58,7 +58,7 @@ export default createMacro(
     program.traverse({
       JSXAttribute(path) {
         if (path.node.name.name !== 'tw') return
-        let styles = getStyles(path.node.value.value, t, state.isDev)
+        let styles = getStyles(path.node.value.value, t, state)
         let attrs = path
           .findParent(p => p.isJSXOpeningElement())
           .get('attributes')
@@ -95,7 +95,7 @@ export default createMacro(
       })
       if (!parsed) return
 
-      parsed.path.replaceWith(getStyles(parsed.str, t, state.isDev))
+      parsed.path.replaceWith(getStyles(parsed.str, t, state))
     })
 
     if (state.shouldImportStyled && !state.existingStyledIdentifier) {

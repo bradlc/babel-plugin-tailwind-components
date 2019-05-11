@@ -6,7 +6,7 @@ import { stringifyScreen, resolveStyle } from './utils.js'
 import astify from './astify.js'
 import assignify from './assignify.js'
 
-export default function getStyles(str, t, isDev) {
+export default function getStyles(str, t, state) {
   let styles = (str.match(/\S+/g) || []).reduce((acc, className, index) => {
     let modifiers = []
     let modifier
@@ -134,7 +134,7 @@ export default function getStyles(str, t, isDev) {
 
   let ast = astify(styles, t)
 
-  if (isDev) {
+  if (state.isDev) {
     ast = assignify(ast, t)
   }
 
