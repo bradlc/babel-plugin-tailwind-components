@@ -8,7 +8,10 @@ let prettier = require('prettier')
 pluginTester({
   plugin,
   pluginName: 'tailwind.macro',
-  babelOptions: { filename: __filename },
+  babelOptions: {
+    filename: __filename,
+    babelrc: true
+  },
   snapshot: false,
   formatResult(code) {
     return prettier

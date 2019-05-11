@@ -3,10 +3,10 @@ import { resolve, relative, dirname } from 'path'
 import { existsSync } from 'fs'
 import findIdentifier from './findIdentifier.js'
 import parseTte from './parseTte.js'
-import transformString from './transformString.js'
 import resolveConfig from 'tailwindcss/lib/util/resolveConfig.js'
 import defaultTailwindConfig from 'tailwindcss/stubs/defaultConfig.stub.js'
 import addImport from './addImport.js'
+import getStyles from './getStyles.js'
 
 export default createMacro(
   ({ babel: { types: t }, references, state, config }) => {
@@ -55,6 +55,34 @@ export default createMacro(
       state.existingStyledIdentifier = true
     }
 
+    program.traverse({
+      JSXAttribute(path) {
+        if (path.node.name.name !== 'tw') return
+        let styles = getStyles(path.node.value.value, t, state.isDev)
+        let attrs = path
+          .findParent(p => p.isJSXOpeningElement())
+          .get('attributes')
+        let cssAttr = attrs.filter(p => p.node.name.name === 'css')
+
+        if (cssAttr.length) {
+          path.remove()
+          let expr = cssAttr[0].get('value').get('expression')
+          if (expr.isArrayExpression()) {
+            expr.pushContainer('elements', styles)
+          } else {
+            expr.replaceWith(t.arrayExpression([expr.node, styles]))
+          }
+        } else {
+          path.replaceWith(
+            t.jsxAttribute(
+              t.jsxIdentifier('css'),
+              t.jsxExpressionContainer(styles)
+            )
+          )
+        }
+      }
+    })
+
     references.default.forEach(path => {
       let parent = path.findParent(x => x.isTaggedTemplateExpression())
       if (!parent) return
@@ -67,12 +95,7 @@ export default createMacro(
       })
       if (!parsed) return
 
-      transformString({
-        path: parsed.path,
-        str: parsed.str,
-        types: t,
-        state
-      })
+      parsed.path.replaceWith(getStyles(parsed.str, t, state.isDev))
     })
 
     if (state.shouldImportStyled && !state.existingStyledIdentifier) {
