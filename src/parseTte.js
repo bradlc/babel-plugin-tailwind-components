@@ -29,13 +29,7 @@ export default function parseTte({ path, types: t, styledIdentifier, state }) {
     path.node.tag.type === 'MemberExpression'
   ) {
     path.replaceWith(
-      t.callExpression(cloneNode(path.node.tag), [
-        t.identifier('placeholder'),
-        t.arrowFunctionExpression(
-          [t.identifier('p')],
-          t.memberExpression(t.identifier('p'), t.identifier('tw'))
-        )
-      ])
+      t.callExpression(cloneNode(path.node.tag), [t.identifier('placeholder')])
     )
 
     path = path.get('arguments')[0]
