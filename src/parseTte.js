@@ -1,3 +1,5 @@
+import replaceWithLocation from './replaceWithLocation.js'
+
 export default function parseTte({ path, types: t, styledIdentifier, state }) {
   let cloneNode = t.cloneNode || t.cloneDeep
 
@@ -9,18 +11,20 @@ export default function parseTte({ path, types: t, styledIdentifier, state }) {
     return null
 
   let str = path.get('quasi').get('quasis')[0].node.value.cooked
+  let strLoc = path.get('quasi').node.loc
 
   if (path.node.tag.type === 'CallExpression') {
-    path
-      .get('tag')
-      .get('callee')
-      .replaceWith(cloneNode(styledIdentifier))
+    replaceWithLocation(
+      path.get('tag').get('callee'),
+      cloneNode(styledIdentifier)
+    )
     state.shouldImportStyled = true
   } else if (path.node.tag.type === 'MemberExpression') {
-    path
-      .get('tag')
-      .get('object')
-      .replaceWith(cloneNode(styledIdentifier))
+    replaceWithLocation(
+      path.get('tag').get('object'),
+      cloneNode(styledIdentifier)
+    )
+
     state.shouldImportStyled = true
   }
 
@@ -28,12 +32,17 @@ export default function parseTte({ path, types: t, styledIdentifier, state }) {
     path.node.tag.type === 'CallExpression' ||
     path.node.tag.type === 'MemberExpression'
   ) {
-    path.replaceWith(
-      t.callExpression(cloneNode(path.node.tag), [t.identifier('placeholder')])
+    replaceWithLocation(
+      path,
+      t.callExpression(cloneNode(path.node.tag), [
+        t.identifier('__twPlaceholder')
+      ])
     )
 
     path = path.get('arguments')[0]
   }
+
+  path.node.loc = strLoc
 
   return { str, path }
 }

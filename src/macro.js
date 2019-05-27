@@ -7,6 +7,7 @@ import resolveConfig from 'tailwindcss/lib/util/resolveConfig.js'
 import defaultTailwindConfig from 'tailwindcss/stubs/defaultConfig.stub.js'
 import addImport from './addImport.js'
 import getStyles from './getStyles.js'
+import replaceWithLocation from './replaceWithLocation.js'
 
 export default createMacro(
   ({ babel: { types: t }, references, state, config }) => {
@@ -95,7 +96,7 @@ export default createMacro(
       })
       if (!parsed) return
 
-      parsed.path.replaceWith(getStyles(parsed.str, t, state))
+      replaceWithLocation(parsed.path, getStyles(parsed.str, t, state))
     })
 
     if (state.shouldImportStyled && !state.existingStyledIdentifier) {
