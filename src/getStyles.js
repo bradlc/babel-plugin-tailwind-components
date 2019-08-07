@@ -20,7 +20,7 @@ export default function getStyles(str, t, state) {
     }
 
     modifiers = modifiers.map(mod => {
-      if (['hover', 'focus', 'active', 'focus-within'].includes(mod)) {
+      if (['hover', 'focus', 'active', 'focus-within', 'disabled', 'visited'].includes(mod)) {
         return `:${mod}`
       }
 
