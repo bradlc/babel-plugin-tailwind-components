@@ -186,7 +186,30 @@ let staticStyles = {
 
   // https://tailwindcss.com/docs/user-select
   'select-none': { userSelect: 'none' },
-  'select-text': { userSelect: 'text' }
+  'select-text': { userSelect: 'text' },
+
+  // https://tailwindcss.com/docs
+  'sr-only': {
+    position: 'absolute',
+    width: '1px',
+    height: '1px',
+    padding: '0',
+    margin: '-1px',
+    overflow: 'hidden',
+    clip: 'rect(0, 0, 0, 0)',
+    whiteSpace: 'nowrap',
+    borderWidth: '0'
+  },
+  'not-sr-only': {
+    position: 'static',
+    width: 'auto',
+    height: 'auto',
+    padding: '0',
+    margin: '0',
+    overflow: 'visible',
+    clip: 'auto',
+    whiteSpace: 'normal'
+  }
 }
 
 export default staticStyles
