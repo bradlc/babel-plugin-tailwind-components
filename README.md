@@ -4,7 +4,7 @@
 
 ## Prerequisites
 
-Before you start using babel-plugin-tailwind-components you will need to ensure that you have a [Tailwind config file](https://tailwindcss.com/docs/configuration). You can grab the default config from the [Tailwind repo](https://github.com/tailwindcss/tailwindcss/blob/master/defaultConfig.stub.js).
+Before you start using babel-plugin-tailwind-components you will need to ensure that you have a [Tailwind config file](https://tailwindcss.com/docs/configuration). You can grab the default config from the [Tailwind repo](https://github.com/tailwindcss/tailwindcss/blob/master/stubs/defaultConfig.stub.js).
 
 Place the config file in your project root as `tailwind.js`. Alternatively you can specify a different filename in the [plugin options](#options).
 
