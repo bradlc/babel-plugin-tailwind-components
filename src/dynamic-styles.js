@@ -70,21 +70,23 @@ export default {
   my: { prop: ['marginTop', 'marginBottom'], config: 'margin' },
   m: { prop: 'margin', config: 'margin' },
 
-  '-mt': { prop: 'marginTop', config: 'negativeMargin', pre: '"-"+' },
-  '-mr': { prop: 'marginRight', config: 'negativeMargin', pre: '"-"+' },
-  '-mb': { prop: 'marginBottom', config: 'negativeMargin', pre: '"-"+' },
-  '-ml': { prop: 'marginLeft', config: 'negativeMargin', pre: '"-"+' },
+  '-mt': { prop: 'marginTop', config: 'negativeMargin', preDev: '"-"+', pre: "-" },
+  '-mr': { prop: 'marginRight', config: 'negativeMargin', preDev: '"-"+', pre: "-" },
+  '-mb': { prop: 'marginBottom', config: 'negativeMargin', preDev: '"-"+', pre: "-" },
+  '-ml': { prop: 'marginLeft', config: 'negativeMargin', preDev: '"-"+', pre: "-" },
   '-mx': {
     prop: ['marginLeft', 'marginRight'],
     config: 'negativeMargin',
-    pre: '"-"+'
+    preDev: '"-"+',
+    pre: "-"
   },
   '-my': {
     prop: ['marginTop', 'marginBottom'],
     config: 'negativeMargin',
-    pre: '"-"+'
+    preDev: '"-"+',
+    pre: "-"
   },
-  '-m': { prop: 'margin', config: 'negativeMargin', pre: '"-"+' },
+  '-m': { prop: 'margin', config: 'negativeMargin', preDev: '"-"+', pre: "-" },
 
   // https://tailwindcss.com/docs/svg
   fill: { prop: 'fill', config: 'svgFill' },
