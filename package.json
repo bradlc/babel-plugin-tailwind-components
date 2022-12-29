@@ -39,6 +39,6 @@
     "@babel/core": "^7.0.0",
     "@babel/plugin-proposal-object-rest-spread": "^7.0.0",
     "@babel/preset-react": "^7.0.0",
-    "microbundle": "^0.4.3"
+    "microbundle": "^0.15.1"
   }
 }
